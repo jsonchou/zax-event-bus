@@ -2,15 +2,15 @@
  * eventbus module
  */
 
-export type EventSource = {
-	[name: string]: any
-}
-
 export type EventHandler = (param?: any) => any
 export type EventHandlers = EventHandler[]
 export type EventOptions = {
 	channel: string
 	debug: boolean
+}
+
+export type EventSource = {
+	[name: string]: EventHandlers
 }
 
 export default class EventBus {
@@ -23,9 +23,11 @@ export default class EventBus {
 	private formatKey(name: string): string {
 		return `@${this.channel}/${name}`
 	}
-	private log(): void {
+	private log(flag: string): void {
 		if (this.debug) {
+			console.log(flag + '='.repeat(50))
 			console.info(this.eventSource)
+			console.log('='.repeat(50))
 		}
 	}
 	/**
@@ -43,30 +45,42 @@ export default class EventBus {
 		if (!this.eventSource[name]) {
 			this.eventSource[name] = []
 		}
-		this.eventSource = this.eventSource.concat(Array.isArray(handler) ? handler : [handler])
-		this.log()
+		this.eventSource[name] = this.eventSource[name].concat(Array.isArray(handler) ? handler : [handler])
+		this.log('on')
 		return this
 	}
 	/**
 	 * cancle the subscribe
 	 */
-	off(name: string): EventBus {
+	off(name: string, handler?: EventHandlers | EventHandler): EventBus {
 		name = this.formatKey(name)
-		delete this.eventSource[name]
-		this.log()
+		if (!handler) {
+			this.eventSource[name] = []
+		} else {
+			let handlers = Array.isArray(handler) ? handler : [handler]
+			let tmp = this.eventSource[name]
+
+			tmp.forEach((item, index) => {
+				handlers.forEach(sub => {
+					if (item === sub) {
+						tmp.splice(index, 1)
+					}
+				})
+			})
+		}
+		this.log('off')
 		return this
 	}
 	/**
 	 * subscribe once
 	 */
 	once(name: string, handler: EventHandlers | EventHandler): EventBus {
-		name = this.formatKey(name)
-		let tmp: EventHandler[] = Array.isArray(handler) ? handler : [handler]
-		tmp.push(() => {
-			this.off(name)
+		let tmp: EventHandlers = Array.isArray(handler) ? handler : [handler]
+		tmp.push((...params) => {
+			this.off(name, ...params)
 		})
 		this.on(name, tmp)
-		this.log()
+		this.log('once')
 		return this
 	}
 	/**
@@ -74,16 +88,13 @@ export default class EventBus {
 	 */
 	emit(name: string, ...params: any[]): EventBus {
 		name = this.formatKey(name)
-		let events: EventHandler | EventHandlers = this.eventSource[name]
-		if (events) {
-			if (typeof events === 'function') {
-				events = [events]
-			}
+		let events = this.eventSource[name]
+		if (events && events.length) {
 			events.map(item => {
 				item(...params)
 			})
 		}
-		this.log()
+		this.log('emit')
 		return this
 	}
 	/**
@@ -91,7 +102,7 @@ export default class EventBus {
 	 */
 	has(name: string): boolean {
 		name = this.formatKey(name)
-		this.log()
+		this.log('has')
 		return !!this.eventSource[name]
 	}
 	/**
@@ -99,22 +110,23 @@ export default class EventBus {
 	 */
 	get(name: string): EventHandler | EventHandlers {
 		name = this.formatKey(name)
-		this.log()
+		this.log('get')
 		return this.eventSource[name]
 	}
 	/**
 	 * get all keys
 	 */
 	keys(): string[] {
-		this.log()
+		this.log('keys')
 		return Object.keys(this.eventSource)
 	}
 	/**
 	 * get all functions
 	 */
-	funcs(): EventHandler | EventHandlers {
-		this.log()
-		return Object.values(this.eventSource)
+	values(): EventHandlers[] {
+		let res = Object.values(this.eventSource)
+		this.log('values')
+		return res
 	}
 	/**
 	 * remove subscribe
@@ -124,7 +136,7 @@ export default class EventBus {
 			item = this.formatKey(item)
 			delete this.eventSource[item]
 		})
-		this.log()
+		this.log('remove')
 		return this
 	}
 	/**
@@ -132,7 +144,7 @@ export default class EventBus {
 	 */
 	removeAll(): EventBus {
 		this.eventSource = {}
-		this.log()
+		this.log('removeAll')
 		return this
 	}
 }

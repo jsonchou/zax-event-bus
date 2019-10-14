@@ -1,49 +1,94 @@
-import EventBus from '../src/eventbus'
+import EventBus, { EventHandler } from '../src/eventbus'
 
 const eventbus = new EventBus({
 	channel: 'jsonchou',
-	debug: true
+	debug: false
 })
 
+const attributeMembers = ['channel', 'debug']
+const funcMembers = ['on', 'once', 'off', 'emit', 'has', 'get', 'keys', 'values', 'remove', 'removeAll']
+const chainfuncMembers = ['on', 'once', 'off', 'emit', 'remove', 'removeAll']
+
+const prefix = '@' + eventbus.channel + '/'
+
 describe('eventbus', () => {
+	it('should have function & attribute member', () => {
+		attributeMembers.forEach(item => {
+			expect(eventbus).toHaveProperty(item)
+		})
+
+		funcMembers.forEach(item => {
+			expect(eventbus).toHaveProperty(item)
+			expect(eventbus[item]).toBeInstanceOf(Function)
+		})
+
+		chainfuncMembers.forEach(item => {
+			expect(eventbus).toHaveProperty(item)
+			expect(eventbus[item]).toBeInstanceOf(Function)
+		})
+	})
+
 	describe('on', () => {
 		beforeEach(() => {
+			// reset EventSource
 			eventbus.eventSource = {}
 		})
 
-		it('should hava on method', () => {
-			expect(eventbus).toHaveProperty('on')
-			expect(eventbus.on).toBeInstanceOf(Function)
+		it('should register a subscribe', () => {
+			const fn1 = jest.fn
+			const fn2 = jest.fn
+			const fn3 = jest.fn
+			const fn4 = jest.fn
+
+			eventbus.on('add', fn1)
+			eventbus.on('delete', fn2)
+			eventbus.on('modify', fn3)
+			eventbus.on('view', fn4)
+			expect(eventbus.eventSource[prefix + 'add']).toContain(fn1)
+			expect(eventbus.eventSource[prefix + 'delete']).toContain(fn2)
+			expect(eventbus.eventSource[prefix + 'modify']).toContain(fn3)
+			expect(eventbus.eventSource[prefix + 'view']).toContain(fn4)
 		})
 
-		it('should register a callback', () => {
-			const fn1 = jest.fn()
-			eventbus.on('foo', fn1)
-			expect(eventbus.eventSource).toHaveProperty('foo')
-			expect(eventbus.eventSource.foo).toEqual([fn1])
-		})
+		it('should register a duplicate subscribe', () => {
+			const foo1 = jest.fn
+			const foo2 = jest.fn
+			const foo3 = jest.fn
 
-		it('should register handlers for any strings', () => {
-			const fn1 = jest.fn()
-			const fn2 = jest.fn()
-			const fn3 = jest.fn()
-			eventbus.on('delete', fn1)
-			eventbus.on(':90098089--', fn2)
-			eventbus.on('default', fn3)
-			expect(eventbus.eventSource['delete']).toContain(fn1)
-			expect(eventbus.eventSource[':90098089--']).toContain(fn2)
-			expect(eventbus.eventSource['default']).toContain(fn3)
-			eventbus.on(1, fn3)
-			expect(eventbus.eventSource[1]).toContain(fn3)
+			eventbus.on('foo', foo1)
+			eventbus.on('foo', foo2)
+			eventbus.on('foo', foo3)
+			expect(eventbus.eventSource[prefix + 'foo'].length).toBe(3)
 		})
+	})
 
-		it('should support append multi handlers for one event', () => {
-			const fn1 = jest.fn()
-			eventbus.on('foo', () => {})
-			eventbus.on('foo', fn1)
-			eventbus.on('foo', fn1)
-			eventbus.on('foo', fn1)
-			expect(eventbus.eventSource.foo.length).toBe(4)
+	describe('once', () => {
+		it('should register a subscribe for once', () => {
+			let fn1 = jest.fn
+			eventbus.once('once_fn', fn1)
+
+			expect(eventbus.eventSource[prefix + 'once_fn']).toContain(fn1)
+			let onceArr = eventbus.eventSource[prefix + 'once_fn']
+			expect(onceArr.length).toBe(2)
+		})
+	})
+
+	describe('off', () => {
+		it('should remove a subscribe', () => {
+			let fn1 = console.log
+			let fn2 = jest.fn
+			eventbus.on('off_fn', [fn1, fn2])
+			eventbus.off('off_fn', fn1)
+			expect(eventbus.eventSource[prefix + 'off_fn']).not.toContain(fn1)
+			expect(eventbus.eventSource[prefix + 'off_fn']).toContain(fn2)
+
+			eventbus.off('off_fn', fn2)
+			expect(eventbus.eventSource[prefix + 'off_fn']).not.toContain(fn2)
+			expect(eventbus.eventSource[prefix + 'off_fn']).toEqual([])
+
+			eventbus.on('off_fn2', [fn1, fn2])
+			eventbus.off('off_fn2')
+			expect(eventbus.eventSource[prefix + 'off_fn2']).toEqual([])
 		})
 	})
 
@@ -52,98 +97,127 @@ describe('eventbus', () => {
 			eventbus.eventSource = {}
 		})
 
-		it('should have emit method', () => {
-			expect(eventbus).toHaveProperty('emit')
-			expect(eventbus.emit).toBeInstanceOf(Function)
-		})
-
-		it('should call handler by eventName', () => {
-			const fn1 = jest.fn()
-			eventbus.on('foo', fn1)
-			eventbus.emit('foo')
+		it('should emit a handler', () => {
+			let fn1 = jest.fn()
+			eventbus.on('emit_fn', fn1)
+			eventbus.emit('emit_fn')
 			expect(fn1).toHaveBeenCalled()
 			expect(fn1).toHaveBeenCalledTimes(1)
-			eventbus.emit('foo')
+			eventbus.emit('emit_fn', 'param1', 'param2', 'param3')
 			expect(fn1).toHaveBeenCalledTimes(2)
-		})
-
-		it('should support call handler by eventName with params', () => {
-			const fn1 = jest.fn()
-			eventbus.on('foo', fn1)
-			eventbus.emit('foo', 'bar')
-			expect(fn1).toHaveBeenCalled()
-			expect(fn1).toHaveBeenCalledWith('bar')
-			eventbus.emit('foo', 'bar', 'abc')
-			expect(fn1).toHaveBeenCalledWith('bar', 'abc')
-			expect(fn1).toHaveBeenLastCalledWith('bar', 'abc')
-		})
-
-		it('should call all handlers by eventName', () => {
-			const fn1 = jest.fn()
-			const fn2 = jest.fn()
-			const fn3 = jest.fn()
-			const fn4 = jest.fn()
-			eventbus.on('foo', fn1)
-			eventbus.on('foo', fn2)
-			eventbus.on('foo', fn3)
-			eventbus.on('foo', fn4)
-
-			eventbus.emit('foo', 'bar')
-
-			expect(fn1).toBeCalledWith('bar')
-			expect(fn2).toBeCalledWith('bar')
-			expect(fn3).toBeCalledWith('bar')
-			expect(fn4).toBeCalledWith('bar')
-		})
-
-		it('should call emit normal if no handler', () => {
-			const fn1 = jest.fn()
-			eventbus.on('foo', fn1)
-			expect(eventbus.emit('boo')).toBeFalsy()
-			expect(fn1).not.toHaveBeenCalled()
-			expect(fn1).toHaveBeenCalledTimes(0)
-			eventbus.on('boo', fn1)
-			eventbus.emit('boo')
-			expect(fn1).toHaveBeenCalled()
-			expect(fn1).toHaveBeenCalledTimes(1)
+			expect(fn1).toHaveBeenCalledWith('param1', 'param2', 'param3')
 		})
 	})
 
-	describe('off', () => {
-		let fn1: jest.EmptyFunction, fn2: jest.EmptyFunction, fn3: jest.EmptyFunction
-
+	describe('has', () => {
 		beforeEach(() => {
-			fn1 = jest.fn()
-			fn2 = jest.fn()
-			fn3 = jest.fn()
-			eventbus.on('foo', fn1)
-			eventbus.on('foo', fn2)
-			eventbus.on('foo', fn3)
-			eventbus.emit('foo', 'bar')
+			eventbus.eventSource = {}
 		})
 
-		it('should have off method', () => {
-			expect(eventbus).toHaveProperty('off')
-			expect(eventbus.off).toBeInstanceOf(Function)
-		})
-
-		it('should remove all handlers by eventName', () => {
-			eventbus.off('foo')
-			expect(eventbus.eventSource.foo).toEqual([])
-		})
-
-		it('should remove a handler by eventName with handler param', () => {
-			eventbus.off('foo', fn1)
-			expect(eventbus.eventSource.foo).not.toContain(fn1)
-			eventbus.off('foo', fn3)
-			expect(eventbus.eventSource.foo).not.toContain(fn3)
-			expect(eventbus.eventSource).toHaveProperty('foo')
-			expect(eventbus.eventSource['foo']).toContain(fn2)
-		})
-
-		it('should return false if without registered handlers', () => {
-			eventbus.off('foo')
-			expect(eventbus.off('foo')).toBeFalsy()
+		it('should have a key', () => {
+			let fn1 = jest.fn()
+			eventbus.on('has_fn', fn1)
+			expect(eventbus.has('has_fn')).toBeTruthy()
+			expect(eventbus.has('has_fn_fake')).not.toBeTruthy()
 		})
 	})
+
+	describe('get', () => {
+		beforeEach(() => {
+			eventbus.eventSource = {}
+		})
+
+		it('should get a key', () => {
+			let fn1 = jest.fn()
+			eventbus.on('get_fn', fn1)
+			expect(eventbus.get('get_fn')).toBeTruthy()
+			expect(eventbus.has('get_fn_fake')).not.toBeTruthy()
+		})
+	})
+
+	describe('keys', () => {
+		beforeEach(() => {
+			eventbus.eventSource = {}
+		})
+
+		it('should get keys', () => {
+			let fn1 = jest.fn()
+			eventbus.on('keys_fn', fn1)
+			expect(eventbus.keys()).toBeTruthy()
+		})
+	})
+
+	describe('values', () => {
+		beforeEach(() => {
+			eventbus.eventSource = {}
+		})
+
+		it('should get all of values', () => {
+			let fn1 = jest.fn()
+			eventbus.on('keys_fn', fn1)
+			expect(eventbus.values()).toBeTruthy()
+		})
+	})
+
+	describe('remove', () => {
+		beforeEach(() => {
+			eventbus.eventSource = {}
+		})
+
+		it('should remove a key', () => {
+			let fn1 = jest.fn()
+			let fn2 = jest.fn()
+			let fn3 = jest.fn()
+			let fn4 = jest.fn()
+			let fn5 = jest.fn()
+
+			eventbus.on('remove_fn1', fn1)
+			eventbus.on('remove_fn2', fn2)
+			eventbus.on('remove_fn3', fn3)
+			eventbus.on('remove_fn4', fn4)
+			eventbus.on('remove_fn5', fn5)
+
+			eventbus.remove('remove_fn1')
+			eventbus.remove('remove_fn2')
+
+			expect(eventbus.get('remove_fn3')).toBeTruthy()
+			expect(eventbus.get('remove_fn4')).toBeTruthy()
+			expect(eventbus.get('remove_fn5')).toBeTruthy()
+
+			eventbus.remove('remove_fn3','remove_fn4','remove_fn5')
+
+			expect(eventbus.get('remove_fn3')).toBeFalsy()
+			expect(eventbus.get('remove_fn4')).toBeFalsy()
+			expect(eventbus.get('remove_fn5')).toBeFalsy()
+			
+		})
+	})
+
+	describe('removeAll', () => {
+		beforeEach(() => {
+			eventbus.eventSource = {}
+		})
+
+		it('should remove all of keys', () => {
+
+			let fn1 = jest.fn()
+			let fn2 = jest.fn()
+			let fn3 = jest.fn()
+			let fn4 = jest.fn()
+			let fn5 = jest.fn()
+
+			eventbus.on('remove_fn1', fn1)
+			eventbus.on('remove_fn2', fn2)
+			eventbus.on('remove_fn3', fn3)
+
+			eventbus.removeAll()
+
+			expect(eventbus.get('remove_fn1')).toBeFalsy()
+			expect(eventbus.get('remove_fn2')).toBeFalsy()
+			expect(eventbus.get('remove_fn3')).toBeFalsy()
+ 
+		})
+	})
+
+
 })
