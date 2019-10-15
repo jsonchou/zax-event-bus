@@ -3,7 +3,7 @@ import log from '../src/log'
 
 const eventbus = new EventBus({
 	channel: 'jsonchou',
-	debug: true
+	debug: false
 })
 
 const attributeMembers = ['channel', 'debug']
