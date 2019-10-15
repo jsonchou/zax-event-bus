@@ -2,7 +2,7 @@
   "name": "zax-eventbus",
   "innerModule": false,
   "needBuild": true,
-  "version": "1.3.10",
+  "version": "1.0.0",
   "description": "zax-eventbus",
   "main": "./libs/umd",
   "module": "./libs/es",
