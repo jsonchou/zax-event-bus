@@ -1,5 +1,5 @@
 const func = (...info: any[]) => {
-	return function decorator(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+	return function decorator(target: any, key: string, descriptor: PropertyDescriptor) {
 		const original = descriptor.value
 		/* istanbul ignore next */
 		if (typeof original === 'function') {
