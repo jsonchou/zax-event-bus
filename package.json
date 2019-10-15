@@ -2,7 +2,7 @@
   "name": "zax-eventbus",
   "innerModule": false,
   "needBuild": true,
-  "version": "1.3.9",
+  "version": "1.3.10",
   "description": "zax-eventbus",
   "main": "./libs/umd",
   "module": "./libs/es",
@@ -87,19 +87,19 @@
       "js"
     ],
     "coveragePathIgnorePatterns": [
-	  "/node_modules/",
-	  "/coverage/",
-	  "/build/",
-	  "/types/",
+      "/node_modules/",
+      "/coverage/",
+      "/build/",
+      "/types/",
       "/test/",
       "/lib/"
     ],
     "coverageThreshold": {
       "global": {
-		"statements": 95,
+        "statements": 95,
         "branches": 75,
         "functions": 95,
-		"lines": 95
+        "lines": 95
       }
     },
     "collectCoverage": true
