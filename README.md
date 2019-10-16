@@ -1,5 +1,5 @@
 # Event bus
-
+[![NPM version](https://img.shields.io/npm/v/zax-eventbus.svg?style=flat)](https://www.npmjs.com/package/zax-eventbus)
 [![Build Status](https://travis-ci.org/jsonchou/zax-eventbus.svg?branch=master)](https://travis-ci.org/jsonchou/zax-eventbus)
 [![codecov](https://codecov.io/gh/jsonchou/zax-eventbus/branch/master/graph/badge.svg)](https://codecov.io/gh/jsonchou/zax-eventbus)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
@@ -21,7 +21,7 @@ yarn add zax-eventbus --save
 ## Usage
 
 ```tsx
-import EventBus from 'zax-eventbus'
+import EventBus, { EventHandler, EventHandlers, EventOptions, EventSource } from 'zax-eventbus'
 
 const eventbus = new EventBus({
 	channel: 'default',
