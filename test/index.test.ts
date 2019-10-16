@@ -1,5 +1,5 @@
 import EventBus, { EventHandler } from '../src/eventbus'
-import log from '../src/log'
+import { log } from '../src/utils/index'
 
 const eventbus = new EventBus({
 	channel: 'jsonchou',
@@ -13,7 +13,6 @@ const chainfuncMembers = ['on', 'once', 'off', 'emit', 'remove', 'removeAll']
 const prefix = '@' + eventbus.channel + '/'
 
 describe('eventbus', () => {
-
 	it('should have channel', () => {
 		expect(eventbus).toHaveProperty('channel')
 	})
@@ -329,6 +328,5 @@ describe('log', () => {
 		let res2 = log()
 		expect(res2).toBeTruthy()
 		expect(res2).toBeInstanceOf(Function)
-
 	})
 })
