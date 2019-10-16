@@ -1,107 +1,109 @@
 {
-  "name": "zax-eventbus",
-  "innerModule": false,
-  "needBuild": true,
-  "version": "1.0.2",
-  "description": "zax-eventbus",
-  "main": "./libs/umd",
-  "module": "./libs/es",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "lint": "eslint --ext .ts src/",
-    "lint:fix": "eslint --fix --ext .ts src/",
-    "build:cjs": "rimraf './libs/cjs' && tsc -t 'ES5' -m 'CommonJS' --outDir './libs/cjs' -d --sourceMap ",
-    "build:es": "rimraf './libs/es' && tsc -t 'ES6' -m 'ESNext' --outDir './libs/es' -d --sourceMap",
-    "build:umd": "rimraf './libs/umd' && tsc -t 'ES5' -m 'UMD' --outDir './libs/umd' -d --sourceMap",
-    "build": "npm run build:cjs && npm run build:es && npm run build:umd",
-    "server": "NODE_ENV=production  GATEWAY=outer    node ./server/index.js",
-    "clean": "node ./build/scripts/clean",
-    "release": "node ./build/scripts/release",
-    "report": "codecov -t $CODECOV_TOKEN",
-    "test": "jest --coverage=true"
-  },
-  "keywords": [
-    "zax-eventbus",
-    "urlUtils",
-    "eventbus",
-    "event-bus"
-  ],
-  "files": [
-    "libs/*",
-    "src/*",
-    "types/*",
-    "build/*",
-    "server/*"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jsonchou/zax-eventbus.git"
-  },
-  "browserslist": [
-    "last 2 versions",
-    "Firefox ESR",
-    "> 1%",
-    "ie >= 9",
-    "iOS >= 9",
-    "Android >= 4.3"
-  ],
-  "homepage": "https://github.com/jsonchou/zax-eventbus",
-  "author": "jsonchou",
-  "license": "MIT",
-  "private": false,
-  "types": "types/index.d.ts",
-  "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/plugin-transform-runtime": "^7.1.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-typescript": "^7.3.3",
-    "@types/jest": "^24.0.18",
-    "@types/node": "^12.0.12",
-    "chalk": "^2.4.2",
-    "codecov": "^3.6.1",
-    "done-rainbow": "^0.1.2",
-    "fs-extra": "^8.1.0",
-    "glob": "^7.1.4",
-    "jest": "^24.9.0",
-    "rollup": "^0.66.6",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-terser": "^3.0.0",
-    "rollup-plugin-typescript": "^1.0.1",
-    "rollup-plugin-uglify": "^6.0.0",
-    "ts-jest": "^24.1.0",
-    "tslib": "^1.10.0",
-    "typescript": "^3.5.2"
-  },
-  "jest": {
-    "transform": {
-      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/coverage/",
-      "/build/",
-      "/types/",
-      "/test/",
-      "/lib/"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "statements": 95,
-        "branches": 75,
-        "functions": 95,
-        "lines": 95
-      }
-    },
-    "collectCoverage": true
-  }
+	"name": "zax-eventbus",
+	"innerModule": false,
+	"needBuild": true,
+	"version": "1.0.2",
+	"description": "zax-eventbus",
+	"main": "./libs/umd",
+	"module": "./libs/es",
+	"directories": {
+		"test": "test",
+		"lib": "libs"
+	},
+	"scripts": {
+		"lint": "eslint --ext .ts src/",
+		"lint:fix": "eslint --fix --ext .ts src/",
+		"build:cjs": "rimraf './libs/cjs' && tsc -t 'ES5' -m 'CommonJS' --outDir './libs/cjs' -d --sourceMap ",
+		"build:es": "rimraf './libs/es' && tsc -t 'ES6' -m 'ESNext' --outDir './libs/es' -d --sourceMap",
+		"build:umd": "rimraf './libs/umd' && tsc -t 'ES5' -m 'UMD' --outDir './libs/umd' -d --sourceMap",
+		"build": "npm-run-all -p build:**",
+		"server": "NODE_ENV=production  GATEWAY=outer   node ./server/index.js",
+		"clean": "node ./build/scripts/clean",
+		"release": "node ./build/scripts/release",
+		"report": "codecov -t $CODECOV_TOKEN",
+		"test": "jest --coverage=true"
+	},
+	"keywords": [
+		"zax-eventbus",
+		"urlUtils",
+		"eventbus",
+		"event-bus"
+	],
+	"files": [
+		"libs/*",
+		"src/*",
+		"types/*",
+		"build/*",
+		"server/*"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/jsonchou/zax-eventbus.git"
+	},
+	"browserslist": [
+		"last 2 versions",
+		"Firefox ESR",
+		"> 1%",
+		"ie >= 9",
+		"iOS >= 9",
+		"Android >= 4.3"
+	],
+	"homepage": "https://github.com/jsonchou/zax-eventbus",
+	"author": "jsonchou",
+	"license": "MIT",
+	"private": false,
+	"types": "types/index.d.ts",
+	"devDependencies": {
+		"@babel/core": "^7.1.2",
+		"@babel/plugin-transform-runtime": "^7.1.0",
+		"@babel/preset-env": "^7.1.0",
+		"@babel/preset-typescript": "^7.3.3",
+		"@types/jest": "^24.0.18",
+		"@types/node": "^12.0.12",
+		"chalk": "^2.4.2",
+		"codecov": "^3.6.1",
+		"done-rainbow": "^0.1.2",
+		"fs-extra": "^8.1.0",
+		"glob": "^7.1.4",
+		"jest": "^24.9.0",
+		"npm-run-all": "^4.1.5",
+		"rollup": "^0.66.6",
+		"rollup-plugin-babel": "^4.0.3",
+		"rollup-plugin-commonjs": "^9.2.0",
+		"rollup-plugin-node-resolve": "^3.4.0",
+		"rollup-plugin-terser": "^3.0.0",
+		"rollup-plugin-typescript": "^1.0.1",
+		"rollup-plugin-uglify": "^6.0.0",
+		"ts-jest": "^24.1.0",
+		"tslib": "^1.10.0",
+		"typescript": "^3.5.2"
+	},
+	"jest": {
+		"transform": {
+			".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+		},
+		"testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+		"moduleFileExtensions": [
+			"ts",
+			"tsx",
+			"js"
+		],
+		"coveragePathIgnorePatterns": [
+			"/node_modules/",
+			"/coverage/",
+			"/build/",
+			"/types/",
+			"/test/",
+			"/lib/"
+		],
+		"coverageThreshold": {
+			"global": {
+				"statements": 95,
+				"branches": 75,
+				"functions": 95,
+				"lines": 95
+			}
+		},
+		"collectCoverage": true
+	}
 }

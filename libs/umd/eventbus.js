@@ -14,21 +14,18 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 (function (factory) {
     if (typeof module === "object" && typeof module.exports === "object") {
         var v = factory(require, exports);
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./log"], factory);
+        define(["require", "exports", "./utils"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var log_1 = __importDefault(require("./log"));
+    var utils_1 = require("./utils");
     var EventBus = (function () {
         function EventBus(opts) {
             this.eventSource = {};
@@ -126,61 +123,61 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             return this;
         };
         __decorate([
-            log_1.default('on'),
+            utils_1.log('on'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", [String, Object]),
             __metadata("design:returntype", EventBus)
         ], EventBus.prototype, "on", null);
         __decorate([
-            log_1.default('off'),
+            utils_1.log('off'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", [String, Object]),
             __metadata("design:returntype", EventBus)
         ], EventBus.prototype, "off", null);
         __decorate([
-            log_1.default('once'),
+            utils_1.log('once'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", [String, Object]),
             __metadata("design:returntype", EventBus)
         ], EventBus.prototype, "once", null);
         __decorate([
-            log_1.default('emit'),
+            utils_1.log('emit'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", [String, Object]),
             __metadata("design:returntype", EventBus)
         ], EventBus.prototype, "emit", null);
         __decorate([
-            log_1.default('has'),
+            utils_1.log('has'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", [String]),
             __metadata("design:returntype", Boolean)
         ], EventBus.prototype, "has", null);
         __decorate([
-            log_1.default('get'),
+            utils_1.log('get'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", [String]),
             __metadata("design:returntype", Object)
         ], EventBus.prototype, "get", null);
         __decorate([
-            log_1.default('keys'),
+            utils_1.log('keys'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", []),
             __metadata("design:returntype", Array)
         ], EventBus.prototype, "keys", null);
         __decorate([
-            log_1.default('values'),
+            utils_1.log('values'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", []),
             __metadata("design:returntype", Array)
         ], EventBus.prototype, "values", null);
         __decorate([
-            log_1.default('remove'),
+            utils_1.log('remove'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", [String]),
             __metadata("design:returntype", EventBus)
         ], EventBus.prototype, "remove", null);
         __decorate([
-            log_1.default('removeAll'),
+            utils_1.log('removeAll'),
             __metadata("design:type", Function),
             __metadata("design:paramtypes", []),
             __metadata("design:returntype", EventBus)

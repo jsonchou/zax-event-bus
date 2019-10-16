@@ -36,4 +36,4 @@
     };
     exports.default = func;
 });
-//# sourceMappingURL=log.js.map
+//# sourceMappingURL=index.js.map

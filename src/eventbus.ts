@@ -2,7 +2,7 @@
  * eventbus module
  */
 
- import log from './log'
+import { log } from './utils'
 
 export type EventHandler = (param?: any) => any
 export type EventHandlers = EventHandler[]
