@@ -1,3 +1,4 @@
 import EventBus, { EventHandler, EventHandlers, EventOptions, EventSource } from './eventbus';
+declare const EventBusSingleton: EventBus;
 export default EventBus;
-export { EventHandler, EventHandlers, EventOptions, EventSource };
+export { EventBusSingleton, EventHandler, EventHandlers, EventOptions, EventSource };

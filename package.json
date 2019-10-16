@@ -2,7 +2,7 @@
 	"name": "zax-eventbus",
 	"innerModule": false,
 	"needBuild": true,
-	"version": "1.0.3",
+	"version": "1.0.0",
 	"description": "zax-eventbus",
 	"main": "./libs/umd",
 	"module": "./libs/es",
@@ -10,6 +10,7 @@
 		"test": "test",
 		"lib": "libs"
 	},
+	"typings": "./libs/umd/index.d.ts",
 	"scripts": {
 		"lint": "eslint --ext .ts src/",
 		"lint:fix": "eslint --fix --ext .ts src/",
@@ -30,11 +31,7 @@
 		"event-bus"
 	],
 	"files": [
-		"libs/*",
-		"src/*",
-		"types/*",
-		"build/*",
-		"server/*"
+		"libs/*"
 	],
 	"repository": {
 		"type": "git",

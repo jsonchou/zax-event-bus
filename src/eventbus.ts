@@ -1,5 +1,5 @@
 /**
- * eventbus module
+ * EventBus module
  */
 
 import { log } from './utils'
